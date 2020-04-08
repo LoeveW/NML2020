@@ -1,2 +1,3 @@
 rootProject.name='Pupillometry'
-include ':app'
+include ':app', ':sdk'
+project(':sdk').projectDir = new File('OpenCV-android-sdk/sdk')

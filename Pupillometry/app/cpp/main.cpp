@@ -6,12 +6,16 @@
 //  Copyright (c) 2015 Vincent. All rights reserved.
 //
 
+
+
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <fstream>
 
+#include <jni.h>
+#include <string>
 
-//#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 using namespace cv;
 using namespace std;
 
@@ -36,6 +40,10 @@ Mat bgr_img;
  * ------
  * intenstiy: The sum of the pixels' intensity.
  */
+JNICALL
+void testConnection(){
+    cout << "connection test succeed";
+}
 
 int mirroredPointsIntensity(Mat inputImg, Point center, int x, int y, bool partialCircumference){
     int intensity = 0;

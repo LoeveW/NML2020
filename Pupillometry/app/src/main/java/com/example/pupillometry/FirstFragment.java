@@ -11,6 +11,13 @@ import androidx.navigation.fragment.NavHostFragment;
 
 public class FirstFragment extends Fragment {
 
+    static{
+        System.out.println("Loading library");
+        System.loadLibrary("main");
+        System.out.println("Library loaded");
+
+    }
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,

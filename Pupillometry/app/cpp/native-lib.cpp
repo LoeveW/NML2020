@@ -1,7 +1,9 @@
 #include <jni.h>
 #include <string>
 
-extern "C" JNIEXPORT jstring JNICALL
+extern "C" JNIEXPORT jstring
+
+JNICALL
 Java_com_example_pupildilation_MainActivity_stringFromJNI(
         JNIEnv* env,
         jobject /* this */) {
