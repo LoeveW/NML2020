@@ -2,16 +2,23 @@ package com.example.pupildilation;
 
 import android.graphics.Point;
 
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.lang.Math.*;
 import java.util.Vector;
 
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
+import static org.opencv.imgproc.Imgproc.MORPH_ELLIPSE;
+import static org.opencv.imgproc.Imgproc.getStructuringElement;
+import static org.opencv.imgproc.Imgproc.morphologyEx;
 
 public class PupilDetection {
     static {
@@ -117,7 +124,7 @@ public class PupilDetection {
     void partialDerivative(Mat inputImg, int x, int y, int rMin, int rMax, float sigma, int radius, double _derivative, boolean partialCircumference) {
         ArrayList<Double> lineIntegrals = new ArrayList<>();
         double pi = Math.PI;
-        for(int r=rMin; r<rMax; r++){
+        for(int r = rMin; r < rMax; r++){
             double lineIntegral = (double) (MidpointCircleAlgorithm(inputImg, new Point(x, y), r, partialCircumference))/(2 * pi * r);
             lineIntegrals.add(lineIntegral);
         }
@@ -134,7 +141,7 @@ public class PupilDetection {
 
         final Size ksize = new Size(5,1);
 
-        //derivatives and smoothedDerivatives should be of type Mat.
+        //derivatives and smoothedDerivatives should be of type Mat??
         GaussianBlur(derivatives, smoothedDerivatives, ksize, 1);
 
         int pos = (int) (Collections.max(smoothedDerivatives) - smoothedDerivatives.get(0)); //not sure if we need the pointers.. didn't know how to do it.
@@ -142,4 +149,81 @@ public class PupilDetection {
         derivative = smoothedDerivatives.get(pos);
         radius = rMin + pos;
     }
+
+    /**
+     * Daugman's Operator
+     * It scans the pixels based on the pixel map, and searchers for the circle that has the greastest intensity change
+     * on its circumference.
+     *
+     * @param
+     * center: Center of the circle
+     * radius: Radius of the cirle
+     * mask: Mask indiciating whether the pixel might be the potential centroid of the circle
+     */
+    void DaugmanOperator(Mat inputImg, int xMin, int xMax, int yMin, int yMax, int rMin, int rMax, Mat mask, Point _center, int _radius, boolean partialCircumference){
+        //partialCircumference = true;
+        Mat radii = Mat.zeros(inputImg.rows(), inputImg.cols(), CvType.CV_32S);
+        Mat derivatives = Mat.zeros(inputImg.rows(), inputImg.cols(), CvType.CV_64F);
+
+        for(int row = yMin; row <= yMax; row++){
+            for(int col = xMin; col <= xMax; col++){
+
+                // No circles outside the image
+                int toBottom = inputImg.rows() - row;
+                int toRight = inputImg.cols() - col;
+
+                int scanRange = Math.min(Math.min(Math.min(col, toRight), Math.min(row, toBottom)), rMax);
+                if ( scanRange >= 10 && mask.get(row, col)[0] > 0 ){
+
+                    int r = 0;
+                    double derivative = 0.0;
+                    // Use x, y to avoid confusion
+                    int x = col;
+                    int y = row;
+                    partialDerivative(inputImg, x, y, rMin, scanRange, 0.5f, r, derivative, partialCircumference);
+                    radii.get(row, col)[0] = r;
+                    derivatives.get(row,col)[0] = derivative;
+                }
+            }
+        }
+
+        double minVal, maxVal;
+        org.opencv.core.Point minLoc, maxLoc;
+//        minMaxLoc(derivatives, _minVal, _maxVal, _minLoc, _maxLoc);
+        maxLoc = Core.minMaxLoc(derivatives).maxLoc;
+        minLoc = Core.minMaxLoc(derivatives).minLoc;
+        maxVal = Core.minMaxLoc(derivatives).maxVal;
+        minVal = Core.minMaxLoc(derivatives).minVal;
+
+        org.opencv.core.Point center = maxLoc;
+        // maxLoc is using (col, row) system
+        double radius = radii.get((int) maxLoc.y, (int) maxLoc.x)[0];
+    }
+
+    /**
+     * Remove specular reflection using morphological operation.
+     */
+    Mat removeReflection(Mat eyeImg) {
+
+        Mat _whiteImg = Mat.ones(eyeImg.size(), eyeImg.type());
+        Mat whiteImg = new Mat(eyeImg.rows(), eyeImg.cols(), eyeImg.type());
+        _whiteImg.convertTo(whiteImg, 255); //looks like this is fine?
+
+        Mat invertImg = new Mat();
+        Core.subtract(whiteImg, eyeImg, invertImg);
+        Mat element = getStructuringElement(MORPH_ELLIPSE, new Size(eyeImg.rows()/10, eyeImg.rows()/10));
+        morphologyEx(invertImg, invertImg, Imgproc.MORPH_CLOSE, element);
+        Mat morphImg = new Mat();
+        Core.subtract(whiteImg, invertImg, morphImg);
+//        imshow("morph", morphImg);  //find imshow JAVA alternative
+        return morphImg;
+    }
+
+
+
+
+
+
+
+
 }
