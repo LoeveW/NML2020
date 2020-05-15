@@ -340,9 +340,6 @@ public class PupilDetection {
         }
 
     }
-/**
- * WORK IN PROGRESS
- */
 
 
     /**
@@ -512,7 +509,6 @@ public class PupilDetection {
                 }
 
             }
-
 
             System.out.println("Pupil segmentation for passively captured images is completed!");
         }
