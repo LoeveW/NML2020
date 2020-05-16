@@ -2,13 +2,11 @@
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="org.opencv"
 4    android:versionCode="3430"
-5    android:versionName="3.4.3" >
-6
-7    <uses-sdk
-7-->G:\Users\Wouter\Documents\GIT\NML2020\PupilDilation\openCVLibrary343\src\main\AndroidManifest.xml:7:5-73
-8        android:minSdkVersion="8"
-8-->G:\Users\Wouter\Documents\GIT\NML2020\PupilDilation\openCVLibrary343\src\main\AndroidManifest.xml:7:15-40
-9        android:targetSdkVersion="26" />
-9-->G:\Users\Wouter\Documents\GIT\NML2020\PupilDilation\openCVLibrary343\src\main\AndroidManifest.xml:7:41-70
-10
-11</manifest>
+5    android:versionName="3.4.3" > <!-- <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="29" /> -->
+6    <uses-sdk
+7        android:minSdkVersion="14"
+7-->G:\Users\Wouter\Documents\GIT\NML2020\PupilDilation\openCVLibrary343\src\main\AndroidManifest.xml
+8        android:targetSdkVersion="29" />
+8-->G:\Users\Wouter\Documents\GIT\NML2020\PupilDilation\openCVLibrary343\src\main\AndroidManifest.xml
+9
+10</manifest>

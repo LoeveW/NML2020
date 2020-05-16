@@ -9,24 +9,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import static com.example.pupildilation.R.layout.activity_main;
 
-public class MainActivity extends AppCompatActivity {
+public class CameraNotice extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        setContentView(activity_main);
+        setContentView(R.layout.activity_camera_notice);
 
         Button start = (Button)findViewById(R.id.startButton);
         start.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, CameraNotice.class);
+                Intent intent = new Intent(CameraNotice.this, Game1Activity.class);
                 startActivity(intent);
             }
         });
-    }
-    static {
-//        System.loadLibrary("openCV_java");
     }
 }
