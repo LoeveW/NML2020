@@ -36,4 +36,36 @@ public class Card {
         return Suit.values();
     }
 
+    private String rankToString() {
+        if(this.rank > 10) {
+            switch(rank) {
+                case 11:
+                    return "J";
+                case 12:
+                    return "Q";
+                case 13:
+                    return "K";
+                case 14:
+                    return "A";
+            }
+        }
+        return "" + rank;
+    }
+
+    private String suitToString() {
+        switch(this.suit) {
+            case HEARTS:
+                return "H";
+            case SPADES:
+                return "S";
+            case CLUBS:
+                return "C";
+            default:
+                return "D";
+        }
+    }
+
+    public String getFileName() {
+        return rankToString() + suitToString() + ".png";
+    }
 }

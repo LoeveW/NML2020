@@ -15,7 +15,7 @@ public class Game1Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_game_one);
-        
+
         this.random = new Random();
         this.cards = getRandomCards();
     }
@@ -30,5 +30,4 @@ public class Game1Activity extends AppCompatActivity {
         }
         return cardsTemp;
     }
-
 }
