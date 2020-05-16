@@ -13,38 +13,23 @@ public class Card {
     private Suit suit;
 
     public Card(int rank, Suit suit) {
-        setRank(rank);
-        setSuit(suit);
+        if (rank >= MIN_RANK || rank <= MAX_RANK)
+            this.rank = rank;
+        else
+            System.out.println("This rank does not exist.");
+
+        if(suit != null)
+            this.suit = suit;
+        else
+            System.out.println("You must specify a suit.");
     }
 
     public int getRank() {
         return rank;
     }
 
-    public void setRank(int rank) {
-        if (rank < MIN_RANK || rank > MAX_RANK)
-            throw new RuntimeException(
-                    String.format("Invalid rank: %d (must be between %d and %d inclusive)",
-                            rank, MIN_RANK, MAX_RANK));
-        this.rank = rank;
-    }
-
     public Suit getSuit() {
         return suit;
-    }
-
-    public void setSuit(Suit suit) {
-        if (suit == null)
-            throw new RuntimeException("Suit must be non-null");
-        this.suit = suit;
-    }
-
-    public static int getMinRank() {
-        return MIN_RANK;
-    }
-
-    public static int getMaxRank() {
-        return MAX_RANK;
     }
 
     public static Suit[] getSuits() {
