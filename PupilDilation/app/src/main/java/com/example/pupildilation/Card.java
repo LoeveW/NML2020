@@ -40,13 +40,13 @@ public class Card {
         if(this.rank > 10) {
             switch(rank) {
                 case 11:
-                    return "J";
+                    return "j";
                 case 12:
-                    return "Q";
+                    return "q";
                 case 13:
-                    return "K";
+                    return "k";
                 case 14:
-                    return "A";
+                    return "a";
             }
         }
         return "" + rank;
@@ -55,17 +55,17 @@ public class Card {
     private String suitToString() {
         switch(this.suit) {
             case HEARTS:
-                return "H";
+                return "h";
             case SPADES:
-                return "S";
+                return "s";
             case CLUBS:
-                return "C";
+                return "c";
             default:
-                return "D";
+                return "d";
         }
     }
 
     public String getFileName() {
-        return rankToString() + suitToString() + ".png";
+        return suitToString() + rankToString();
     }
 }
