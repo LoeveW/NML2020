@@ -1,18 +1,24 @@
 package com.example.pupildilation;
 
+import java.util.Random;
+
 public class Card {
+
+    private Random random;
 
     public enum Suit {
         CLUBS, DIAMONDS, HEARTS, SPADES;
     }
 
-    private static final int MIN_RANK = 1;
-    private static final int MAX_RANK = 13;
+    private static final int MIN_RANK = 2;
+    private static final int MAX_RANK = 14;
 
     private int rank;
     private Suit suit;
 
     public Card(int rank, Suit suit) {
+        this.random = new Random();
+
         if (rank >= MIN_RANK || rank <= MAX_RANK)
             this.rank = rank;
         else
@@ -65,7 +71,12 @@ public class Card {
         }
     }
 
-    public String getFileName() {
+    @Override
+    public String toString() {
         return suitToString() + rankToString();
+    }
+
+    public boolean equals(Card that) {
+        return this.rank == that.rank && this.suit == that.suit;
     }
 }
