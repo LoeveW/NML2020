@@ -3,7 +3,9 @@ package com.example.pupildilation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,7 @@ public class Game2Activity extends AppCompatActivity {
     private String userAnswers;
     private String trueAnswers;
     private String liedAnswers;
+    private boolean clicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,20 +40,22 @@ public class Game2Activity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_game_two);
         Intent intent = getIntent();
-        String[] deck = intent.getStringArrayExtra("deck");
-        readResultStrings(intent);
-        this.trial = intent.getIntExtra("trial", -1);
-        this.random = new Random();
-
-        this.cards = new Card[deck.length];
-        this.cardsFalse = new Card[this.cards.length];
-        this.cardsQuery = new Card[this.cards.length + this.cardsFalse.length];
-
-        setCards(deck);
-        this.cardsFalse = getRandomCards();
-        this.cardsQuery = getQueryCardArr(this.cards, this.cardsFalse);
-        this.trial++;
-
+        init(intent);
+        ImageButton yes = (ImageButton) findViewById(R.id.yes);
+        ImageButton no = (ImageButton) findViewById(R.id.no);
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userAnswers = userAnswers + "0";
+            }
+        });
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userAnswers = userAnswers + "0";
+                clicked = true;
+            }
+        });
         final Handler handler = new Handler();
 
         final Runnable runnable = new Runnable() {
@@ -59,22 +64,36 @@ public class Game2Activity extends AppCompatActivity {
                 int resID = getResId(cardsQuery[count].toString(), R.drawable.class); //changed method to a toString.
                 queryView.setImageResource(resID);
                 count++;
-                if (count < 6) { // nr of trials / games to be played
+                if (count < 6) {
                     handler.postDelayed(this, 5000);
-                }
-                else{
+
+                } else {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             nextTask();
                         }
-                    },5000 );
+                    }, 5000);
                 }
             }
         };
 
-// trigger first time
         handler.post(runnable);
+    }
+
+    private void init(Intent intent) {
+        String[] deck = intent.getStringArrayExtra("deck");
+        readResultStrings(intent);
+        this.trial = intent.getIntExtra("trial", -1);
+        this.random = new Random();
+        this.cards = new Card[deck.length];
+        this.cardsFalse = new Card[this.cards.length];
+        this.cardsQuery = new Card[this.cards.length + this.cardsFalse.length];
+        setCards(deck);
+        this.cardsFalse = getRandomCards();
+        this.cardsQuery = getQueryCardArr(this.cards, this.cardsFalse);
+        this.trial++;
+        this.clicked = false;
     }
 
 
@@ -180,12 +199,10 @@ public class Game2Activity extends AppCompatActivity {
         Collections.shuffle(shuffleList);
         Card[] arrShuffled = (Card[]) shuffleList.toArray();
 
-        // THIS PART DOES NOT WORK YET
-        //TODO
         boolean b = false;
-        for (int i = 0; i < arr1.length; i ++){
-            for(int j = 0; j < arrShuffled.length; j ++){
-                if(arr1[i].equals(arrShuffled[j])) {
+        for (int i = 0; i < arrShuffled.length; i++) {
+            for (int j = 0; j < arr1.length; j++) {
+                if (arr1[j].equals(arrShuffled[i])) {
                     this.trueAnswers = this.trueAnswers + "0";
                     b = true;
                 }
@@ -197,10 +214,10 @@ public class Game2Activity extends AppCompatActivity {
         }
         return arrShuffled;
     }
-    
-    private String[] deckToStringArr(Card[] cards){
+
+    private String[] deckToStringArr(Card[] cards) {
         String[] s = new String[cards.length];
-        for(int i = 0; i < cards.length; i++){
+        for (int i = 0; i < cards.length; i++) {
             s[i] = cards[i].toString();
         }
         return s;
