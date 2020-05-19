@@ -13,6 +13,8 @@ import java.lang.reflect.Field;
 import java.util.Random;
 
 public class Game1Activity extends AppCompatActivity {
+    private static final int NR_CARDS = 3;
+
     private Card[] cards;
     private ImageView[] imageViews;
     private String[] deck;
@@ -22,6 +24,7 @@ public class Game1Activity extends AppCompatActivity {
     private String liedAnswers;
 
     private Random random;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +98,19 @@ public class Game1Activity extends AppCompatActivity {
     private Card[] getRandomCards(){
         Card[] cardsTemp = new Card[3];
         Card.Suit[] suits = Card.getSuits();
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i < NR_CARDS; i++){
             int rank = this.random.nextInt(12) + 2;
             int suitVal = this.random.nextInt(4);
             cardsTemp[i] = new Card(rank, suits[suitVal]);
         }
+                if(cardsTemp[0].equals(cardsTemp[1]) ||
+                        cardsTemp[0].equals(cardsTemp[2])||
+                        cardsTemp[1].equals(cardsTemp[0])||
+                        cardsTemp[1].equals(cardsTemp[2])||
+                        cardsTemp[2].equals(cardsTemp[0])||
+                        cardsTemp[2].equals(cardsTemp[1])){
+                    return getRandomCards();
+            }
         return cardsTemp;
     }
 

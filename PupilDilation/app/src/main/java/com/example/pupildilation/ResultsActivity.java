@@ -2,7 +2,9 @@ package com.example.pupildilation;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +27,31 @@ public class ResultsActivity extends AppCompatActivity {
         Intent i = getIntent();
         setResultFields(i);
 
+        Button shareButton = (Button)findViewById(R.id.shareButton);
+        Button mainButton = (Button)findViewById(R.id.mainButton);
+
+        mainButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ResultsActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        shareButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = "I have played 'I Can See It In Your Eyes' and got the following results:"+
+                        "\n User answers: " + userAnswers +
+                        "\n True answers: " + trueAnswers +
+                        "\n Lied answers:" + liedAnswers;
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            }
+        });
     }
 
     private void setResultFields(Intent i) {
@@ -43,8 +70,21 @@ public class ResultsActivity extends AppCompatActivity {
     }
 
     private void readResultStrings(Intent i) {
-        this.userAnswers = i.getStringExtra("userAnswers");
+//        int trials = i.getIntExtra("trial", -1);
+//        int nrCards = i.getIntExtra("nrCards", -1);
+        this.userAnswers= i.getStringExtra("userAnswers");
         this.trueAnswers = i.getStringExtra("trueAnswers");
         this.liedAnswers = i.getStringExtra("liedAnswers");
+
+//        if(userA.length() > trials * nrCards) {
+//            String usr = "";
+//            for (int x = 0; x < trials - 1; x++) {
+//                int s = x * nrCards;
+//                usr = usr + userA.substring(s + 1, s + 1 + nrCards);
+//            }
+//            this.userAnswers = usr;
+//        }
+//        else
+//            this.userAnswers = userA;
     }
 }

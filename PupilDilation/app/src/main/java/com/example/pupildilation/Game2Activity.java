@@ -18,6 +18,7 @@ import java.util.Random;
 
 public class Game2Activity extends AppCompatActivity {
 
+    private static final int NR_TRIALS = 1;
     private Card[] cards;
     private Card[] cardsFalse;
     private Card[] cardsQuery;
@@ -30,6 +31,10 @@ public class Game2Activity extends AppCompatActivity {
     private String trueAnswers;
     private String liedAnswers;
     private boolean clicked;
+    private boolean firstRun;
+
+    private ImageButton yes;
+    private ImageButton no;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,19 +46,29 @@ public class Game2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_game_two);
         Intent intent = getIntent();
         init(intent);
-        ImageButton yes = (ImageButton) findViewById(R.id.yes);
-        ImageButton no = (ImageButton) findViewById(R.id.no);
+        this.yes = (ImageButton) findViewById(R.id.yes);
+        this.no = (ImageButton) findViewById(R.id.no);
         yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userAnswers = userAnswers + "0";
+                if (!clicked) {
+                    userAnswers = userAnswers + "O";
+                    no.setAlpha(0.5f);
+                    clicked = true;
+                    System.out.println("O added");
+                }
+
             }
         });
         no.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userAnswers = userAnswers + "0";
-                clicked = true;
+                if (!clicked) {
+                    userAnswers = userAnswers + "-";
+                    yes.setAlpha(0.5f);
+                    clicked = true;
+                    System.out.println("- added");
+                }
             }
         });
         final Handler handler = new Handler();
@@ -64,9 +79,26 @@ public class Game2Activity extends AppCompatActivity {
                 int resID = getResId(cardsQuery[count].toString(), R.drawable.class); //changed method to a toString.
                 queryView.setImageResource(resID);
                 count++;
-                if (count < 6) {
-                    handler.postDelayed(this, 5000);
+                yes.setAlpha(1f);
+                no.setAlpha(1f);
+                handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(!clicked){
+                                                userAnswers = userAnswers + "x";
+                                            }
+                                            else{
+                                                clicked = false;
+                                            }
 
+                                        }
+                                    }
+
+                        , 5000);
+                if (count < cardsQuery.length) {
+                    handler.postDelayed(this
+
+                            , 5000);
                 } else {
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -104,7 +136,7 @@ public class Game2Activity extends AppCompatActivity {
     }
 
     private void nextTask() {
-        if (this.trial <= 2) { //nr of trials / games to be played
+        if (this.trial <= NR_TRIALS) { //nr of trials / games to be played
             Intent i = new Intent(Game2Activity.this, Game1Activity.class);
             i.putExtra("trial", trial);
             i.putExtra("userAnswers", userAnswers);
@@ -117,6 +149,8 @@ public class Game2Activity extends AppCompatActivity {
             i.putExtra("userAnswers", userAnswers);
             i.putExtra("trueAnswers", trueAnswers);
             i.putExtra("liedAnswers", liedAnswers);
+            i.putExtra("trial", trial);
+            i.putExtra("nrCards", this.cardsQuery.length);
             startActivityForResult(i, 1);
         }
     }
@@ -170,20 +204,28 @@ public class Game2Activity extends AppCompatActivity {
             return -1;
         }
     }
-
     private Card[] getRandomCards() {
-        Card[] cardsTemp = new Card[3];
+        Card[] cardsTemp = new Card[this.cards.length];
         Card.Suit[] suits = Card.getSuits();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < this.cards.length; i++) {
             int rank = this.random.nextInt(12) + 2;
             int suitVal = this.random.nextInt(4);
             cardsTemp[i] = new Card(rank, suits[suitVal]);
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < this.cards.length; j++) {
                 if (cards[j].equals(cardsTemp[i])) {
-                    getRandomCards();
+                    return getRandomCards();
                 }
             }
         }
+        if (cardsTemp[0].equals(cardsTemp[1]) ||
+                cardsTemp[0].equals(cardsTemp[2]) ||
+                cardsTemp[1].equals(cardsTemp[0]) ||
+                cardsTemp[1].equals(cardsTemp[2]) ||
+                cardsTemp[2].equals(cardsTemp[0]) ||
+                cardsTemp[2].equals(cardsTemp[1])) {
+            return getRandomCards();
+        }
+
         return cardsTemp;
     }
 
@@ -203,7 +245,7 @@ public class Game2Activity extends AppCompatActivity {
         for (int i = 0; i < arrShuffled.length; i++) {
             for (int j = 0; j < arr1.length; j++) {
                 if (arr1[j].equals(arrShuffled[i])) {
-                    this.trueAnswers = this.trueAnswers + "0";
+                    this.trueAnswers = this.trueAnswers + "O";
                     b = true;
                 }
             }
