@@ -37,7 +37,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
         android:layout_marginTop="28dp"
-        android:text="Your Results"
+        android:text="@string/your_results"
         android:textColor="@android:color/background_dark"
         android:textSize="36sp"
         android:textStyle="bold"
@@ -51,7 +51,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
         android:layout_marginTop="150dp"
-        android:text="Your answers:"
+        android:text="@string/your_answers"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,7 +62,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
         android:layout_marginTop="180dp"
-        android:text="True answers:"
+        android:text="@string/true_answers"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -95,7 +95,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
         android:layout_marginBottom="100dp"
-        android:text="Share your Result"
+        android:text="@string/share_your_result"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -106,7 +106,7 @@
         android:layout_marginEnd="28dp"
         android:layout_marginRight="28dp"
         android:layout_marginBottom="100dp"
-        android:text="Back to Main menu"
+        android:text="@string/back_to_main_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -115,7 +115,7 @@
         android:layout_width="270dp"
         android:layout_height="63dp"
         android:gravity="center"
-        android:text="Please share your result and let us know whether your lies were identified correnctly!"
+        android:text="@string/please_share_string"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
@@ -130,7 +130,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginBottom="100dp"
-        android:text="O\n-\nx"
+        android:text="@string/o_n_nx"
         android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintStart_toStartOf="parent" />
@@ -142,7 +142,7 @@
         android:layout_marginStart="48dp"
         android:layout_marginLeft="48dp"
         android:layout_marginBottom="100dp"
-        android:text="Yes\nNo\nNot Answered"
+        android:text="@string/yes_nno_nnot_answered"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintStart_toStartOf="parent" />
 

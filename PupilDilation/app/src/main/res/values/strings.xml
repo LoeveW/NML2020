@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">PupilDilation</string>
-    <string name="these_are_your_cards_do_not_forget_them">These are your cards, do not forget them!</string>
+    <string name="memorize_cards_string">Please memorize these cards</string>
+    <string name="please_share_string">Please share your result and let us know whether your lies were identified correctly!</string>
+    <string name="back_to_main_menu">Back to Main menu</string>
+    <string name="share_your_result">Share your Result</string>
+    <string name="yes_nno_nnot_answered">Yes\nNo\nNot Answered</string>
+    <string name="o_n_nx">O\n-\nx</string>
+    <string name="true_answers">True answers:</string>
+    <string name="your_answers">Your answers:</string>
+    <string name="your_results">Your Results</string>
+    <string name="how_to_play">How to play</string>
+    <string name="start_game">Start Game</string>
+    <string name="i_can_see_it_in_your_eyes">I Can See It In Your Eyes</string>
+    <string name="how_to_play_body">This game exists of two main sections. First, you are shown a screen with 3 cards. You are asked to memorize these cards within 8 seconds. \n\nAfter those 8 seconds, a new screen appears, ands shows you a card. The question is whether this is one of the cards that were previously shown to you. You can answer yes or no. You have 8 seconds to answer. \n\nInstead of telling the truth, you can intentionally give the wrong answer (you choose to bluff). When you do this, please remember when you did this, as this is important for our research. The app will try to see whether your answer was genuine or not.\n\nThis game consists of 5 trials, showing 6 cards per trial. In total this means that a single game takes 4 minutes.</string>
 </resources>

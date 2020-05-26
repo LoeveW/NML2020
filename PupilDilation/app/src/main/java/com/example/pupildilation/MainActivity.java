@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.example.pupildilation.R.id.howtoButton;
 import static com.example.pupildilation.R.layout.activity_main;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,11 +21,21 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(activity_main);
 
-        Button start = (Button)findViewById(R.id.startButton);
-        start.setOnClickListener(new View.OnClickListener(){
+        Button start = (Button) findViewById(R.id.startButton);
+        start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, CameraNotice.class);
+                startActivity(intent);
+            }
+        });
+
+
+        Button howto = (Button)findViewById(howtoButton);
+        howto.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, HowToPlay.class);
                 startActivity(intent);
             }
         });

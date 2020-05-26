@@ -54,6 +54,10 @@ public class ResultsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Retrieves the answer strings and shows them to the user.
+     * @param i Intent that initiated this activity.
+     */
     private void setResultFields(Intent i) {
         readResultStrings(i);
         tv[0].setText(this.userAnswers);
@@ -62,6 +66,9 @@ public class ResultsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Finds the strings that are used to show the results to the user.
+     */
     private void getTextViews() {
         this.tv = new TextView[3];
         tv[0] = (TextView) findViewById(R.id.userAnswers);
@@ -69,22 +76,14 @@ public class ResultsActivity extends AppCompatActivity {
         tv[2] = (TextView) findViewById(R.id.liedAnswers);
     }
 
+    /**
+     * Reads the strings of answers as passed on in the intent.
+     * @param i Intent that initiated this activity.
+     */
     private void readResultStrings(Intent i) {
-//        int trials = i.getIntExtra("trial", -1);
-//        int nrCards = i.getIntExtra("nrCards", -1);
         this.userAnswers= i.getStringExtra("userAnswers");
         this.trueAnswers = i.getStringExtra("trueAnswers");
         this.liedAnswers = i.getStringExtra("liedAnswers");
 
-//        if(userA.length() > trials * nrCards) {
-//            String usr = "";
-//            for (int x = 0; x < trials - 1; x++) {
-//                int s = x * nrCards;
-//                usr = usr + userA.substring(s + 1, s + 1 + nrCards);
-//            }
-//            this.userAnswers = usr;
-//        }
-//        else
-//            this.userAnswers = userA;
     }
 }

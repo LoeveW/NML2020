@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +16,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
+import static com.example.pupildilation.R.id.progressBar;
 
 public class Game2Activity extends AppCompatActivity {
 
@@ -31,14 +34,15 @@ public class Game2Activity extends AppCompatActivity {
     private String trueAnswers;
     private String liedAnswers;
     private boolean clicked;
-    private boolean firstRun;
 
     private ImageButton yes;
     private ImageButton no;
 
+    private int progress = 0;
+    private int DELAY = 8000; //time in ms for delay in between 2 game screens
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -71,41 +75,53 @@ public class Game2Activity extends AppCompatActivity {
                 }
             }
         });
+
+        final ProgressBar pb = (ProgressBar) findViewById(progressBar);
+        pb.setMax(1000);
+        pb.setProgress(0);
         final Handler handler = new Handler();
+        final ImageView queryView = (ImageView) findViewById(R.id.imageView4);
 
         final Runnable runnable = new Runnable() {
+
             public void run() {
-                ImageView queryView = (ImageView) findViewById(R.id.imageView4);
+                progress++;
+                pb.setProgress(progress);
                 int resID = getResId(cardsQuery[count].toString(), R.drawable.class); //changed method to a toString.
                 queryView.setImageResource(resID);
-                count++;
-                yes.setAlpha(1f);
-                no.setAlpha(1f);
-                handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if(!clicked){
-                                                userAnswers = userAnswers + "x";
-                                            }
-                                            else{
-                                                clicked = false;
-                                            }
 
-                                        }
-                                    }
-
-                        , 5000);
-                if (count < cardsQuery.length) {
+                if (pb.getProgress() < 1000) {
                     handler.postDelayed(this
 
-                            , 5000);
+                            , DELAY / 1000);
                 } else {
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            nextTask();
-                        }
-                    }, 5000);
+                    handler.post(new Runnable() {
+                                     @Override
+                                     public void run() {
+                                         if (!clicked) {
+                                             userAnswers = userAnswers + "x";
+                                         } else {
+                                             clicked = false;
+                                         }
+                                     }
+                                 }
+                    );
+                    count++;
+                    yes.setAlpha(1f);
+                    no.setAlpha(1f);
+                    if (count < cardsQuery.length) {
+                        progress = 0;
+                        handler.post(this
+
+                        );
+                    } else {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                nextTask();
+                            }
+                        });
+                    }
                 }
             }
         };
@@ -113,6 +129,10 @@ public class Game2Activity extends AppCompatActivity {
         handler.post(runnable);
     }
 
+    /**
+     * Collection of basic stuff that is needed to get this class up and running.
+     * @param intent Intent that started this activity.
+     */
     private void init(Intent intent) {
         String[] deck = intent.getStringArrayExtra("deck");
         readResultStrings(intent);
@@ -128,13 +148,19 @@ public class Game2Activity extends AppCompatActivity {
         this.clicked = false;
     }
 
-
+    /**
+     * Used to pass on the result strings: reads the strings from the initiating intent.
+     * @param i Intent that started this activity.
+     */
     private void readResultStrings(Intent i) {
         this.userAnswers = i.getStringExtra("userAnswers");
         this.trueAnswers = i.getStringExtra("trueAnswers");
         this.liedAnswers = i.getStringExtra("liedAnswers");
     }
 
+    /**
+     * Determines and starts the next tasks, depending on what trial it is currently at.
+     */
     private void nextTask() {
         if (this.trial <= NR_TRIALS) { //nr of trials / games to be played
             Intent i = new Intent(Game2Activity.this, Game1Activity.class);
@@ -155,6 +181,10 @@ public class Game2Activity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the array of cards as read by the cardFromString cardreader.
+     * @param deck
+     */
     private void setCards(String[] deck) {
         for (int i = 0; i < deck.length; i++)
             this.cards[i] = cardFromString(deck[i]);
@@ -165,6 +195,11 @@ public class Game2Activity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Used to read cards from a string, usually received via intents.
+     * @param s input string
+     * @return Card that was specified in this string
+     */
     public Card cardFromString(String s) {
         Card.Suit suit;
         int rank;
@@ -194,6 +229,12 @@ public class Game2Activity extends AppCompatActivity {
         return new Card(rank, suit);
     }
 
+    /**
+     * Transforms a String to an ID that can be used to call a certain resource.
+     * @param resName Name of the resource
+     * @param c Class of the resource
+     * @return The ID of the resource
+     */
     public static int getResId(String resName, Class<?> c) {
 
         try {
@@ -204,6 +245,11 @@ public class Game2Activity extends AppCompatActivity {
             return -1;
         }
     }
+
+    /**
+     * Used to create an array of random cards
+     * @return an array of random cards
+     */
     private Card[] getRandomCards() {
         Card[] cardsTemp = new Card[this.cards.length];
         Card.Suit[] suits = Card.getSuits();
@@ -229,6 +275,12 @@ public class Game2Activity extends AppCompatActivity {
         return cardsTemp;
     }
 
+    /**
+     * Used to merge and shuffle two arrays of Cards.
+     * @param arr1 Array to merge and shuffle
+     * @param arr2 Array to merge and shuffle
+     * @return Card[] that consists of arr1 and arr2, shuffled.
+     */
     private Card[] getQueryCardArr(Card[] arr1, Card[] arr2) {
         Card[] arrFinal = new Card[arr1.length + arr2.length];
         for (int i = 0; i < arrFinal.length; i++) {
@@ -255,13 +307,5 @@ public class Game2Activity extends AppCompatActivity {
             b = false;
         }
         return arrShuffled;
-    }
-
-    private String[] deckToStringArr(Card[] cards) {
-        String[] s = new String[cards.length];
-        for (int i = 0; i < cards.length; i++) {
-            s[i] = cards[i].toString();
-        }
-        return s;
     }
 }

@@ -42,6 +42,10 @@ public class Card {
         return Suit.values();
     }
 
+    /**
+     * Converts card rank to a string representation, according to the filename of the image resource.
+     * @return String representationn of rank.
+     */
     private String rankToString() {
         if(this.rank > 10) {
             switch(rank) {
@@ -58,6 +62,10 @@ public class Card {
         return "" + rank;
     }
 
+    /**
+     * Converts card suit to a string representation, according to the filename of the image resource.
+     * @return String representationn of suit.
+     */
     private String suitToString() {
         switch(this.suit) {
             case HEARTS:
@@ -76,6 +84,11 @@ public class Card {
         return suitToString() + rankToString();
     }
 
+    /**
+     * Checks whether two cards are equal.
+     * @param that the other card
+     * @return true if equal, false if not.
+     */
     public boolean equals(Card that) {
         return this.rank == that.rank && this.suit == that.suit;
     }
