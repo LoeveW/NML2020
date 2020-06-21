@@ -1,6 +1,10 @@
 package com.example.pupildilation;
 
+import android.Manifest;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -9,17 +13,36 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.example.listeners.PictureCapturingListener;
+import com.example.services.APictureCapturingService;
+import com.example.services.PictureCapturingServiceImpl;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.TreeMap;
 
 import static com.example.pupildilation.R.id.progressBar;
 
-public class Game2Activity extends AppCompatActivity {
+public class Game2Activity extends AppCompatActivity implements com.example.listeners.PictureCapturingListener {
+    private static final String[] requiredPermissions = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+    };
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_CODE = 1;
+
+    private ImageView uploadBackPhoto;
+    private ImageView uploadFrontPhoto;
+
+    //The capture service
+    private APictureCapturingService pictureService;
 
     private static final int NR_TRIALS = 1;
     private Card[] cards;
@@ -40,7 +63,9 @@ public class Game2Activity extends AppCompatActivity {
 
     private int progress = 0;
     private int DELAY = 8000; //time in ms for delay in between 2 game screens
+    private int STEPS = 250; // how much steps there are for the progressbar, app and its timings may slow down when set too high.
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +73,36 @@ public class Game2Activity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_game_two);
+        ContextCompat.checkSelfPermission(this, Manifest.permission. WRITE_EXTERNAL_STORAGE);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_ACCESS_CODE);
+
+        this.pictureService = PictureCapturingServiceImpl.getInstance(this);
+        final PictureCapturingListener listener = new PictureCapturingListener() {
+            @Override
+            public void onCaptureDone(final String pictureUrl, final byte[] pictureData) {
+                if (pictureData != null && pictureUrl != null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap bitmap = BitmapFactory.decodeByteArray(pictureData, 0, pictureData.length);
+                            final int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+                            final Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+                            if (pictureUrl.contains("0_pic.jpg")) {
+                                uploadBackPhoto.setImageBitmap(scaled);
+                            } else if (pictureUrl.contains("1_pic.jpg")) {
+                                uploadFrontPhoto.setImageBitmap(scaled);
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onDoneCapturingAllPhotos(TreeMap<String, byte[]> picturesTaken) {
+            }
+        };
+        pictureService.startCapturing(listener);
+
         Intent intent = getIntent();
         init(intent);
         this.yes = (ImageButton) findViewById(R.id.yes);
@@ -60,6 +115,9 @@ public class Game2Activity extends AppCompatActivity {
                     no.setAlpha(0.5f);
                     clicked = true;
                     System.out.println("O added");
+                    pictureService.startCapturing(listener);
+
+
                 }
 
             }
@@ -72,12 +130,14 @@ public class Game2Activity extends AppCompatActivity {
                     yes.setAlpha(0.5f);
                     clicked = true;
                     System.out.println("- added");
+                    pictureService.startCapturing(listener);
+
                 }
             }
         });
 
         final ProgressBar pb = (ProgressBar) findViewById(progressBar);
-        pb.setMax(1000);
+        pb.setMax(STEPS);
         pb.setProgress(0);
         final Handler handler = new Handler();
         final ImageView queryView = (ImageView) findViewById(R.id.imageView4);
@@ -90,10 +150,10 @@ public class Game2Activity extends AppCompatActivity {
                 int resID = getResId(cardsQuery[count].toString(), R.drawable.class); //changed method to a toString.
                 queryView.setImageResource(resID);
 
-                if (pb.getProgress() < 1000) {
+                if (pb.getProgress() < STEPS) {
                     handler.postDelayed(this
 
-                            , DELAY / 1000);
+                            , DELAY / STEPS);
                 } else {
                     handler.post(new Runnable() {
                                      @Override
@@ -307,5 +367,29 @@ public class Game2Activity extends AppCompatActivity {
             b = false;
         }
         return arrShuffled;
+    }
+
+    @Override
+    public void onCaptureDone(final String pictureUrl, final byte[] pictureData) {
+        if (pictureData != null && pictureUrl != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Bitmap bitmap = BitmapFactory.decodeByteArray(pictureData, 0, pictureData.length);
+                    final int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+                    final Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+                    if (pictureUrl.contains("0_pic.jpg")) {
+                        uploadBackPhoto.setImageBitmap(scaled);
+                    } else if (pictureUrl.contains("1_pic.jpg")) {
+                        uploadFrontPhoto.setImageBitmap(scaled);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onDoneCapturingAllPhotos(TreeMap<String, byte[]> picturesTaken) {
+
     }
 }

@@ -1,13 +1,21 @@
 package com.example.pupildilation;
 
 import android.content.Intent;
+import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.services.APictureCapturingService;
+
+import org.opencv.core.Mat;
 
 import java.lang.reflect.Field;
 import java.util.Random;
@@ -15,6 +23,14 @@ import java.util.Random;
 import static com.example.pupildilation.R.id.progressBar;
 
 public class Game1Activity extends AppCompatActivity {
+
+
+    private ImageView uploadBackPhoto;
+    private ImageView uploadFrontPhoto;
+
+    //The capture service
+    private APictureCapturingService pictureService;
+
     private static final int NR_CARDS = 3;
 
     private Card[] cards;
@@ -26,10 +42,15 @@ public class Game1Activity extends AppCompatActivity {
     private String liedAnswers;
     private int progress = 0;
 
+
     private Random random;
 
     private int DELAY = 8000; //time in ms for delay in between 2 game screens
+    private int STEPS = 200; // how much steps there are for the progressbar, app and its timings may slow down when set too high.
 
+    private Camera camera;
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +66,8 @@ public class Game1Activity extends AppCompatActivity {
         this.cards = getRandomCards();
         this.imageViews = generateImageViews();
         this.deck = deckToStringArr(this.cards);
-
         final ProgressBar pb = (ProgressBar) findViewById(progressBar);
-        pb.setMax(1000);
+        pb.setMax(STEPS);
         pb.setProgress(0);
 
         final Handler handler = new Handler();
@@ -57,10 +77,10 @@ public class Game1Activity extends AppCompatActivity {
             public void run() {
                 progress++;
                 pb.setProgress(progress);
-                if (pb.getProgress() < 1000) {
+                if (pb.getProgress() < STEPS) {
                     handler.postDelayed(this
 
-                            , DELAY / 1000);
+                            , DELAY / STEPS);
                 } else {
                     Intent intent = new Intent(Game1Activity.this, Game2Activity.class);
                     intent.putExtra("deck", deck);
@@ -73,10 +93,33 @@ public class Game1Activity extends AppCompatActivity {
                 }
             }
         };
-        runnable.run();
 
+        runnable.run();
         setCardImages();
     }
+
+        private void dispatchTakePictureIntent() {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, 1);
+            }
+        }
+
+
+    public static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        } catch (Exception e) {
+            // Camera is not available (in use or does not exist)
+        }
+        return c; // returns null if camera is unavailable
+    }
+
+        private void readImage(){
+            Mat mat = new Mat();
+        }
+
 
     /**
      * Used to pass on the result strings: reads the strings from the initiating intent.
@@ -96,7 +139,7 @@ public class Game1Activity extends AppCompatActivity {
     }
 
     /**
-     * @returnthe 3 cards that are shown to the user
+     * @return the 3 cards that are shown to the user
      */
     public Card[] getCards(){
         return this.cards;
@@ -174,4 +217,7 @@ public class Game1Activity extends AppCompatActivity {
         }
         return s;
     }
+
+
 }
+

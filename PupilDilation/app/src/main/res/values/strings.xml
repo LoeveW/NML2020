@@ -12,5 +12,15 @@
     <string name="how_to_play">How to play</string>
     <string name="start_game">Start Game</string>
     <string name="i_can_see_it_in_your_eyes">I Can See It In Your Eyes</string>
-    <string name="how_to_play_body">This game exists of two main sections. First, you are shown a screen with 3 cards. You are asked to memorize these cards within 8 seconds. \n\nAfter those 8 seconds, a new screen appears, ands shows you a card. The question is whether this is one of the cards that were previously shown to you. You can answer yes or no. You have 8 seconds to answer. \n\nInstead of telling the truth, you can intentionally give the wrong answer (you choose to bluff). When you do this, please remember when you did this, as this is important for our research. The app will try to see whether your answer was genuine or not.\n\nThis game consists of 5 trials, showing 6 cards per trial. In total this means that a single game takes 4 minutes.</string>
+    <string name="how_to_play_body">This game consists of two main sections. First, you are shown a screen with 3 cards.
+        You are asked to memorize these cards within 8 seconds. \n\nAfter those 8 seconds, a new screen appears, and
+        shows you a card. The question is whether this is one of the cards that were previously shown to you. You can answer
+        yes or no. You have 8 seconds to answer. \n\nInstead of telling the truth, you can intentionally give the wrong answer
+        (you choose to bluff). When you do this, please remember when you did this, as this is important for our research.
+        The app will try to see whether your answer was genuine or not.\n\nThis game consists of 5 trials, showing 6 cards per
+        trial. In total this means that a single game takes 4 minutes.
+        \n\nThe aim of this game is to finish your cards as soon as possible. If the first card that is queried is answered with a \"Yes\" correctly,
+        or you bluffed \"Yes\" without the game noticing that you bluffed, you get 6 points. Every card that follows is worth 1 point less than its predecessor.
+        However, if the game notices that you are bluffing using your phone\'s camera, you are game over. Do you truly have a pokerface?
+    </string>
 </resources>

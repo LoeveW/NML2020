@@ -2,11 +2,14 @@ package com.example.pupildilation;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.File;
 
 import static com.example.pupildilation.R.id.howtoButton;
 import static com.example.pupildilation.R.layout.activity_main;
@@ -20,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(activity_main);
+        createDirectory();
 
         Button start = (Button) findViewById(R.id.startButton);
         start.setOnClickListener(new View.OnClickListener() {
@@ -40,7 +44,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    static {
-//        System.loadLibrary("openCV_java");
+
+    public void createDirectory(){
+        File folder = new File(Environment.getExternalStorageDirectory() + "/Experiments/Experiment_files");
+        if(!folder.exists()) folder.mkdirs();
+
     }
 }
