@@ -104,6 +104,7 @@ public class PictureCapturingServiceImpl extends APictureCapturingService {
                 this.currentCameraId = this.cameraIds.poll();
                 openCamera();
             } else {
+                System.out.println("No camera!");
                 //No camera detected!
                 capturingListener.onDoneCapturingAllPhotos(picturesTaken);
             }
@@ -144,12 +145,14 @@ public class PictureCapturingServiceImpl extends APictureCapturingService {
     private final ImageReader.OnImageAvailableListener onImageAvailableListener = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader imReader) {
+            System.out.println("image available!");
             final Image image = imReader.acquireLatestImage();
             final ByteBuffer buffer = image.getPlanes()[0].getBuffer();
             final byte[] bytes = new byte[buffer.capacity()];
             buffer.get(bytes);
             Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
             String pathToImg = PictureCapturingServiceImpl.this.saveToInternalStorage(bitmapImage);
+            picturesTaken.put(pathToImg, bytes);
             image.close();
         }
     };
@@ -205,7 +208,7 @@ public class PictureCapturingServiceImpl extends APictureCapturingService {
         }
     };
 
-
+//works!
     private void takePicture() throws CameraAccessException {
         if (null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null");

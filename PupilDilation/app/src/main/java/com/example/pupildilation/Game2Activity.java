@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -21,17 +22,39 @@ import androidx.core.content.ContextCompat;
 import com.example.listeners.PictureCapturingListener;
 import com.example.services.APictureCapturingService;
 import com.example.services.PictureCapturingServiceImpl;
+import com.example.services.PupilSeeker;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
 import static com.example.pupildilation.R.id.progressBar;
 
-public class Game2Activity extends AppCompatActivity implements com.example.listeners.PictureCapturingListener {
+public class Game2Activity extends AppCompatActivity {
+
+    private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback() {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i("TAG", "OpenCV loaded successfully");
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
+
     private static final String[] requiredPermissions = {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
@@ -80,6 +103,7 @@ public class Game2Activity extends AppCompatActivity implements com.example.list
         final PictureCapturingListener listener = new PictureCapturingListener() {
             @Override
             public void onCaptureDone(final String pictureUrl, final byte[] pictureData) {
+                System.out.println("Image captured");
                 if (pictureData != null && pictureUrl != null) {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -87,11 +111,13 @@ public class Game2Activity extends AppCompatActivity implements com.example.list
                             final Bitmap bitmap = BitmapFactory.decodeByteArray(pictureData, 0, pictureData.length);
                             final int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
                             final Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
-                            if (pictureUrl.contains("0_pic.jpg")) {
-                                uploadBackPhoto.setImageBitmap(scaled);
-                            } else if (pictureUrl.contains("1_pic.jpg")) {
-                                uploadFrontPhoto.setImageBitmap(scaled);
-                            }
+                            PupilSeeker ps = new PupilSeeker(scaled);
+                            ps.start();
+//                    if (pictureUrl.contains("0_pic.jpg")) {
+//                        uploadBackPhoto.setImageBitmap(scaled);
+//                    } else if (pictureUrl.contains("1_pic.jpg")) {
+//                        uploadFrontPhoto.setImageBitmap(scaled);
+//                    }
                         }
                     });
                 }
@@ -99,6 +125,32 @@ public class Game2Activity extends AppCompatActivity implements com.example.list
 
             @Override
             public void onDoneCapturingAllPhotos(TreeMap<String, byte[]> picturesTaken) {
+                System.out.println("all photos taken");
+                System.out.println(picturesTaken.size());
+                for(Map.Entry<String, byte[]> entry : picturesTaken.entrySet()){
+                    String pictureUrl = entry.getKey();
+                    final byte[] pictureData = entry.getValue();
+                    System.out.println(pictureUrl);
+                    System.out.println(pictureData);
+                    if (pictureData != null && pictureUrl != null) {
+                        System.out.println("start processing of image");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Bitmap bitmap = BitmapFactory.decodeByteArray(pictureData, 0, pictureData.length);
+                                final int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+                                final Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+                                PupilSeeker ps = new PupilSeeker(scaled);
+                                ps.start();
+//                    if (pictureUrl.contains("0_pic.jpg")) {
+//                        uploadBackPhoto.setImageBitmap(scaled);
+//                    } else if (pictureUrl.contains("1_pic.jpg")) {
+//                        uploadFrontPhoto.setImageBitmap(scaled);
+//                    }
+                            }
+                        });
+                    }
+                }
             }
         };
         pictureService.startCapturing(listener);
@@ -369,27 +421,4 @@ public class Game2Activity extends AppCompatActivity implements com.example.list
         return arrShuffled;
     }
 
-    @Override
-    public void onCaptureDone(final String pictureUrl, final byte[] pictureData) {
-        if (pictureData != null && pictureUrl != null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    final Bitmap bitmap = BitmapFactory.decodeByteArray(pictureData, 0, pictureData.length);
-                    final int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
-                    final Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
-                    if (pictureUrl.contains("0_pic.jpg")) {
-                        uploadBackPhoto.setImageBitmap(scaled);
-                    } else if (pictureUrl.contains("1_pic.jpg")) {
-                        uploadFrontPhoto.setImageBitmap(scaled);
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onDoneCapturingAllPhotos(TreeMap<String, byte[]> picturesTaken) {
-
-    }
 }
