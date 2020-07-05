@@ -86,7 +86,7 @@ public class Game2Activity extends AppCompatActivity {
 
     private int progress = 0;
     private int DELAY = 8000; //time in ms for delay in between 2 game screens
-    private int STEPS = 250; // how much steps there are for the progressbar, app and its timings may slow down when set too high.
+    private int STEPS = 200; // how much steps there are for the progressbar, app and its timings may slow down when set too high.
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
