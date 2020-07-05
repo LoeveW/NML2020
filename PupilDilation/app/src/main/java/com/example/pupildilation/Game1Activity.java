@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -16,8 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.services.APictureCapturingService;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.core.Mat;
 
 import java.lang.reflect.Field;
@@ -49,7 +46,7 @@ public class Game1Activity extends AppCompatActivity {
 
     private Random random;
 
-    private int DELAY = 1000; //time in ms for delay in between 2 game screens
+    private int DELAY = 8000; //time in ms for delay in between 2 game screens
     private int STEPS = 200; // how much steps there are for the progressbar, app and its timings may slow down when set too high.
 
     private Camera camera;
